@@ -64,7 +64,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["https://bipinchatapp.vercel.app"],
+    origin: ["https://bipinchatapp.vercel.app", "http://localhost:3000"],
   },
 });
 
@@ -132,23 +132,25 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("acceptfriendreq", (data: TAcceptedFriends) => {
-    friends = [
-      {
-        requester: {
-          id: data.requester?.id,
-          username: data.requester?.username,
-          image: data.requester?.image,
+    if (data?.receiver?.id && data?.requester?.id) {
+      friends = [
+        {
+          requester: {
+            id: data.requester?.id,
+            username: data.requester?.username,
+            image: data.requester?.image,
+          },
+          receiver: {
+            id: data.receiver?.id,
+            username: data.receiver?.username,
+            image: data.receiver?.image,
+          },
         },
-        receiver: {
-          id: data.receiver?.id,
-          username: data.receiver?.username,
-          image: data.receiver?.image,
-        },
-      },
-      ...friends,
-    ];
+        ...friends,
+      ];
 
-    io.emit("updatedFriendsList", friends);
+      io.emit("updatedFriendsList", friends);
+    }
   });
 });
 
