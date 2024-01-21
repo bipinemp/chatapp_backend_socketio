@@ -10,7 +10,9 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: process.env.NODE_ENV === "production" ? false : [process.env.BASE_URL],
+        origin: process.env.NODE_ENV === "production"
+            ? false
+            : ["https://bipinchatapp.vercel.app"],
     },
 });
 app.get("/", (req, res) => res.send("Hello from server"));
