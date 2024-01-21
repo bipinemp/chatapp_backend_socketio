@@ -10,12 +10,13 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ["https://bipinchatapp.vercel.app"],
+        origin: ["http://localhost:3000"],
     },
 });
 app.get("/", (req, res) => res.send("Hello from server"));
 io.on("connection", (socket) => {
     console.log("A user connected");
+    console.log("fjdkl");
     socket.on("joinRoom", ({ userData, roomId }) => {
         if (userData === null || userData === void 0 ? void 0 : userData.username) {
             socket.join(roomId);
@@ -47,7 +48,7 @@ io.on("connection", (socket) => {
                             id: message.senderId,
                             username: message.username,
                             email: "",
-                            image: message.image,
+                            image: message.image || "",
                         },
                     },
                 ];
@@ -60,23 +61,25 @@ io.on("connection", (socket) => {
         friendReqs.filter((friend) => friend.requester.id !== requesterId);
     });
     socket.on("acceptfriendreq", (data) => {
-        var _a, _b, _c, _d, _e, _f;
-        friends = [
-            {
-                requester: {
-                    id: (_a = data.requester) === null || _a === void 0 ? void 0 : _a.id,
-                    username: (_b = data.requester) === null || _b === void 0 ? void 0 : _b.username,
-                    image: (_c = data.requester) === null || _c === void 0 ? void 0 : _c.image,
+        var _a, _b, _c, _d, _e, _f, _g, _h;
+        if (((_a = data === null || data === void 0 ? void 0 : data.receiver) === null || _a === void 0 ? void 0 : _a.id) && ((_b = data === null || data === void 0 ? void 0 : data.requester) === null || _b === void 0 ? void 0 : _b.id)) {
+            friends = [
+                {
+                    requester: {
+                        id: (_c = data.requester) === null || _c === void 0 ? void 0 : _c.id,
+                        username: (_d = data.requester) === null || _d === void 0 ? void 0 : _d.username,
+                        image: (_e = data.requester) === null || _e === void 0 ? void 0 : _e.image,
+                    },
+                    receiver: {
+                        id: (_f = data.receiver) === null || _f === void 0 ? void 0 : _f.id,
+                        username: (_g = data.receiver) === null || _g === void 0 ? void 0 : _g.username,
+                        image: (_h = data.receiver) === null || _h === void 0 ? void 0 : _h.image,
+                    },
                 },
-                receiver: {
-                    id: (_d = data.receiver) === null || _d === void 0 ? void 0 : _d.id,
-                    username: (_e = data.receiver) === null || _e === void 0 ? void 0 : _e.username,
-                    image: (_f = data.receiver) === null || _f === void 0 ? void 0 : _f.image,
-                },
-            },
-            ...friends,
-        ];
-        io.emit("updatedFriendsList", friends);
+                ...friends,
+            ];
+            io.emit("updatedFriendsList", friends);
+        }
     });
 });
 server.listen(PORT, () => {

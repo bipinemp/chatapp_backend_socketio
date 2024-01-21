@@ -64,7 +64,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["https://bipinchatapp.vercel.app", "http://localhost:3000"],
+    origin: ["http://localhost:3000"],
   },
 });
 
@@ -72,6 +72,7 @@ app.get("/", (req, res) => res.send("Hello from server"));
 
 io.on("connection", (socket: Socket) => {
   console.log("A user connected");
+  console.log("fjdkl");
 
   socket.on(
     "joinRoom",
@@ -114,10 +115,11 @@ io.on("connection", (socket: Socket) => {
               id: message.senderId,
               username: message.username,
               email: "",
-              image: message.image,
+              image: message.image || "",
             },
           },
         ];
+
         io.to(message.receiverId || "").emit(
           "friendreq_notification",
           friendReqs
