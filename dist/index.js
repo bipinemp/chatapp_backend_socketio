@@ -11,12 +11,12 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: ["https://bipinchatapp.vercel.app"],
+        // origin: ["http://localhost:3000"],
     },
 });
 app.get("/", (req, res) => res.send("Hello from server"));
 io.on("connection", (socket) => {
     console.log("A user connected");
-    console.log("fjdkl");
     socket.on("joinRoom", ({ userData, roomId }) => {
         if (userData === null || userData === void 0 ? void 0 : userData.username) {
             socket.join(roomId);
